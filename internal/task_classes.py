@@ -104,7 +104,7 @@ class Parallel(Group):
             threads.append(thread)
             thread.start()
 
-        for threads in threads:
-            threads.join()
+        for thread in threads:
+            thread.join()
 
         self._on_done()

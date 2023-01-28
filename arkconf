@@ -1,0 +1,9 @@
+series
+    echo 'series 1'
+    parallel
+        echo 'parallel 1'
+        series
+            echo 'nested series 1'
+            echo 'nested series 2'
+        echo 'parallel 2'
+    echo 'series 2'

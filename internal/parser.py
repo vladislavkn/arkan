@@ -13,7 +13,7 @@ class Parser:
 
     @staticmethod
     def _get_line_info(line, i):
-        match = re.search("^(\s*)([\w| |'|\"]+)#?", line)
+        match = re.search("^(\s*)([^\n|#]+)", line)
         spaces, key = match.group(1), match.group(2).strip()
         nesting = len(spaces) / 4
         if nesting != len(spaces) // 4:

@@ -1,5 +1,6 @@
 import re
 
+from internal.arkan_parsing_error import ArkanParsingError
 from internal.task_classes import Series, Parallel, Group, Command
 
 
@@ -17,7 +18,7 @@ class Parser:
         spaces, key = match.group(1), match.group(2).strip()
         nesting = len(spaces) / 4
         if nesting != len(spaces) // 4:
-            raise RuntimeError(f"Arkan parsing error: wrong indent on line {i+1}: '{line.strip()}'")
+            raise ArkanParsingError(i+1, "wrong indent")
         return int(nesting), key
 
     @staticmethod
@@ -42,7 +43,7 @@ class Parser:
             nesting, key = self._get_line_info(line, i)
 
             if nesting == 0 and self.root_node is not None:
-                raise RuntimeError(f"Arkan parsing error on line {i+1}: only one root task allowed")
+                raise ArkanParsingError(i+1, "only one root task allowed")
 
             # Create node for current string
             node = self._create_node(key)
@@ -54,6 +55,8 @@ class Parser:
                     temp_node = temp_node.parent
                 self.current_parent = temp_node
             elif nesting > self.last_nesting:
+                if not isinstance(self.last_node, Group):
+                    raise ArkanParsingError(i, "Group head should be either 'series' or 'parallel'")
                 self.current_parent = self.last_node
 
             # Assign created node to current parent node
